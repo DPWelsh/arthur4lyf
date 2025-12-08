@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --background: #1a1a1a;
+  --foreground: #f5f5f5;
+  --accent: #ff6b35;
+  --accent-secondary: #00d4aa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Graffiti zine aesthetic */
+.spray-text {
+  font-family: 'Permanent Marker', 'Marker Felt', cursive;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  letter-spacing: 0.05em;
+}
+
+.hand-drawn {
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+}
+
+.torn-edge {
+  clip-path: polygon(
+    0% 2%, 3% 0%, 7% 3%, 12% 1%, 18% 2%, 23% 0%, 28% 3%,
+    35% 1%, 42% 2%, 48% 0%, 55% 3%, 62% 1%, 68% 2%, 75% 0%,
+    82% 3%, 88% 1%, 93% 2%, 97% 0%, 100% 2%,
+    100% 98%, 97% 100%, 93% 97%, 88% 99%, 82% 98%, 75% 100%,
+    68% 97%, 62% 99%, 55% 98%, 48% 100%, 42% 97%, 35% 99%,
+    28% 98%, 23% 100%, 18% 97%, 12% 99%, 7% 98%, 3% 100%, 0% 98%
+  );
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.drip {
+  animation: drip 1s ease-in forwards;
+}
+
+@keyframes drip {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Noise texture overlay */
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Sticker style */
+.sticker {
+  transform: rotate(-2deg);
+  box-shadow: 2px 3px 8px rgba(0,0,0,0.3);
+  border: 3px solid white;
+}
+
+/* Tape effect */
+.tape {
+  position: relative;
+}
+
+.tape::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-5deg);
+  width: 60px;
+  height: 20px;
+  background: rgba(255, 235, 180, 0.7);
+}
+
+/* Spray paint drip */
+.paint-drip {
+  position: relative;
+}
+
+.paint-drip::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 30%;
+  width: 8px;
+  height: 25px;
+  background: currentColor;
+  border-radius: 0 0 4px 4px;
+  opacity: 0.7;
+}
+
+/* Mobile touch feedback */
+@media (hover: none) {
+  .touch-highlight:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}

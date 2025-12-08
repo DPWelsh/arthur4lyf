@@ -148,3 +148,29 @@ The homepage transforms as puzzles complete:
 - Shake gesture for hints
 - No scrolling on main views
 - Portrait orientation primary
+
+## Content Notes
+
+**Password**: Arthur backwards → "ruhtrA"
+
+**Aesthetic Inspiration**: Martin Parr (her favorite photographer)
+
+**Her Interests/Hobbies**:
+- Pole dancing
+- Knitting
+- Leather works
+- Climbing
+- Diving
+- Rummikub at the Batu Karu cabin (memory)
+
+**Inside Jokes/References**:
+- Luigi pizza throwing meme game
+- First met at temple party (use photo)
+- Book: "Machines Like Me"
+
+**Puzzle Content Ideas**:
+- Memory match: Photos of her hobbies, temple party pic, Batu Karu cabin
+- Word unscramble: Meaningful phrase TBD
+- Jigsaw: Temple party photo or significant memory
+- Audio: Voice note or significant song
+- Riddle: Reference to shared memories/book/inside jokes
