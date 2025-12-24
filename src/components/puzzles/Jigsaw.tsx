@@ -68,16 +68,17 @@ function SortablePiece({
       className={`aspect-square cursor-grab active:cursor-grabbing touch-none select-none
                 relative overflow-hidden
                 ${isDragging ? 'scale-105 shadow-2xl z-50' : ''}
-                ${isCorrect ? 'ring-2 ring-[#00d4aa]' : ''}`}
+                ${isCorrect ? 'ring-2 ring-[#228b22]' : ''}`}
       whileTap={{ scale: 1.02 }}
     >
-      {/* Placeholder image - replace with actual image */}
+      {/* Puzzle piece with image */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-[#ff6b35]/50 to-[#00d4aa]/50"
+        className="absolute inset-0"
         style={{
           backgroundImage: 'url(/images/puzzle-image.jpg)',
           backgroundSize: '300% 300%',
           backgroundPosition: `${bgX}% ${bgY}%`,
+          backgroundColor: '#2a2a2a',
         }}
       />
 

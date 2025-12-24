@@ -3,19 +3,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { getProgress, getNextPuzzle, isAllComplete } from '@/lib/progress';
+import { getProgress, setCardViewed, isAllCardsViewed } from '@/lib/progress';
+import { CARDS } from '@/lib/constants';
 
-const PUZZLE_POSITIONS = [
-  { x: '15%', y: '25%', rotate: -8, label: '???' },
-  { x: '70%', y: '20%', rotate: 5, label: '???' },
-  { x: '25%', y: '55%', rotate: -3, label: '???' },
-  { x: '65%', y: '60%', rotate: 7, label: '???' },
-  { x: '45%', y: '80%', rotate: -5, label: '???' },
+const CARD_POSITIONS = [
+  { x: '20%', y: '30%', rotate: -8 },
+  { x: '50%', y: '50%', rotate: 3 },
+  { x: '75%', y: '35%', rotate: -4 },
 ];
 
 export default function Hub() {
-  const [progress, setProgress] = useState({ completedPuzzles: [] as number[], unlocked: false });
+  const [progress, setProgress] = useState({ viewedCards: [] as number[], unlocked: false });
   const [mounted, setMounted] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,17 +26,24 @@ export default function Hub() {
       return;
     }
     setProgress(p);
-
-    if (isAllComplete()) {
-      router.push('/finale');
-    }
   }, [router]);
 
-  const nextPuzzle = getNextPuzzle();
+  const handleCardClick = (cardId: number) => {
+    setSelectedCard(cardId);
+  };
 
-  const handlePuzzleClick = (puzzleId: number) => {
-    if (puzzleId <= nextPuzzle) {
-      router.push(`/puzzle/${puzzleId}`);
+  const handleCloseCard = () => {
+    if (selectedCard !== null) {
+      setCardViewed(selectedCard);
+      setProgress(getProgress());
+      setSelectedCard(null);
+
+      // Check if all cards viewed - unlock the game
+      if (isAllCardsViewed()) {
+        setTimeout(() => {
+          router.push('/game');
+        }, 500);
+      }
     }
   };
 
@@ -44,118 +51,158 @@ export default function Hub() {
 
   return (
     <main className="relative h-screen w-screen bg-[#1a1a1a] overflow-hidden">
-      {/* Chaotic background collage */}
+      {/* Background Christmas elements */}
       <div className="absolute inset-0">
-        {/* Spray paint splatters */}
-        <div className="absolute top-[10%] left-[5%] w-32 h-32 rounded-full bg-[#ff6b35]/20 blur-xl" />
-        <div className="absolute top-[60%] right-[10%] w-48 h-48 rounded-full bg-[#00d4aa]/15 blur-2xl" />
-        <div className="absolute bottom-[20%] left-[20%] w-24 h-24 rounded-full bg-white/10 blur-lg" />
+        <div className="absolute top-[10%] left-[5%] w-32 h-32 rounded-full bg-[#c41e3a]/20 blur-xl" />
+        <div className="absolute top-[60%] right-[10%] w-48 h-48 rounded-full bg-[#228b22]/15 blur-2xl" />
+        <div className="absolute bottom-[20%] left-[20%] w-24 h-24 rounded-full bg-[#ffd700]/10 blur-lg" />
 
-        {/* Random scrawls and marks */}
-        <div className="absolute top-[5%] right-[15%] text-4xl opacity-20 rotate-12 font-[family-name:var(--font-spray)]">✗</div>
-        <div className="absolute top-[40%] left-[8%] text-3xl opacity-15 -rotate-6 font-[family-name:var(--font-spray)]">★</div>
-        <div className="absolute bottom-[10%] right-[25%] text-5xl opacity-10 rotate-45">◯</div>
-        <div className="absolute top-[70%] left-[60%] text-2xl opacity-20 -rotate-12">△</div>
-
-        {/* Torn paper texture lines */}
-        <div className="absolute top-0 left-[30%] w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
-        <div className="absolute top-0 left-[70%] w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
+        {/* Christmas graffiti elements */}
+        <div className="absolute top-[5%] right-[15%] text-4xl opacity-20 rotate-12">❄</div>
+        <div className="absolute top-[40%] left-[8%] text-3xl opacity-15 -rotate-6 text-[#228b22]">★</div>
+        <div className="absolute bottom-[10%] right-[25%] text-5xl opacity-15 rotate-45 text-[#c41e3a]">❄</div>
       </div>
 
-      {/* Progress indicator - 5 small tags */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {[1, 2, 3, 4, 5].map((id) => (
+      {/* String lights */}
+      <div className="absolute top-0 left-0 right-0 h-6 flex justify-around items-center opacity-50 z-10">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className={`w-2 h-2 rounded-full ${i % 3 === 0 ? 'bg-[#c41e3a]' : i % 3 === 1 ? 'bg-[#228b22]' : 'bg-[#ffd700]'}`}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
+            style={{ boxShadow: `0 0 6px ${i % 3 === 0 ? '#c41e3a' : i % 3 === 1 ? '#228b22' : '#ffd700'}` }}
+          />
+        ))}
+      </div>
+
+      {/* Progress indicator */}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {[1, 2, 3].map((id) => (
           <motion.div
             key={id}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: id * 0.1 }}
             className={`w-3 h-3 rounded-full border-2 ${
-              progress.completedPuzzles.includes(id)
-                ? 'bg-[#00d4aa] border-[#00d4aa]'
-                : id === nextPuzzle
-                ? 'bg-transparent border-[#ff6b35] animate-pulse'
+              progress.viewedCards?.includes(id)
+                ? 'bg-[#228b22] border-[#228b22]'
                 : 'bg-transparent border-white/30'
             }`}
           />
         ))}
       </div>
 
-      {/* Puzzle entry points */}
-      <AnimatePresence>
-        {PUZZLE_POSITIONS.map((pos, idx) => {
-          const puzzleId = idx + 1;
-          const isCompleted = progress.completedPuzzles.includes(puzzleId);
-          const isAvailable = puzzleId <= nextPuzzle;
-          const isNext = puzzleId === nextPuzzle;
+      {/* Clickable funny cards */}
+      {CARD_POSITIONS.map((pos, idx) => {
+        const cardId = idx + 1;
+        const isViewed = progress.viewedCards?.includes(cardId);
 
-          if (!isAvailable) return null;
-
-          return (
-            <motion.button
-              key={puzzleId}
-              initial={{ opacity: 0, scale: 0, rotate: pos.rotate - 20 }}
-              animate={{ opacity: 1, scale: 1, rotate: pos.rotate }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{ delay: puzzleId * 0.15, type: 'spring' }}
-              onClick={() => handlePuzzleClick(puzzleId)}
-              className={`absolute touch-highlight ${
-                isCompleted ? 'opacity-50' : ''
-              }`}
+        return (
+          <motion.button
+            key={cardId}
+            initial={{ opacity: 0, scale: 0, rotate: pos.rotate - 20 }}
+            animate={{ opacity: 1, scale: 1, rotate: pos.rotate }}
+            transition={{ delay: cardId * 0.2, type: 'spring' }}
+            onClick={() => handleCardClick(cardId)}
+            className={`absolute touch-highlight ${isViewed ? 'opacity-60' : ''}`}
+            style={{
+              left: pos.x,
+              top: pos.y,
+              transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+            }}
+          >
+            <div
+              className={`relative w-28 h-36 sm:w-32 sm:h-40 rounded-sm overflow-hidden
+                        ${isViewed ? 'grayscale' : ''}
+                        sticker cursor-pointer hover:scale-105 transition-transform`}
               style={{
-                left: pos.x,
-                top: pos.y,
-                transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+                backgroundImage: `url(/images/card-${cardId}.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: isViewed ? '#444' : '#c41e3a',
               }}
             >
-              <div
-                className={`relative px-6 py-4 font-[family-name:var(--font-spray)] text-xl
-                          ${isCompleted
-                            ? 'bg-[#00d4aa]/80 text-[#1a1a1a]'
-                            : isNext
-                            ? 'bg-[#ff6b35] text-[#1a1a1a]'
-                            : 'bg-white/90 text-[#1a1a1a]'
-                          }
-                          sticker`}
-              >
-                {isCompleted ? '✓' : isNext ? '?' : pos.label}
+              {/* Placeholder if no image yet */}
+              {!isViewed && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-4xl">🎁</span>
+                </div>
+              )}
 
-                {/* Animated glow for next puzzle */}
-                {isNext && !isCompleted && (
-                  <motion.div
-                    className="absolute inset-0 bg-[#ff6b35] rounded-sm -z-10"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                )}
-              </div>
-            </motion.button>
-          );
-        })}
-      </AnimatePresence>
+              {/* Viewed checkmark */}
+              {isViewed && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <span className="text-3xl text-[#228b22]">✓</span>
+                </div>
+              )}
+            </div>
+          </motion.button>
+        );
+      })}
 
-      {/* Center title/hint */}
+      {/* Center hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center pointer-events-none"
       >
-        <h1 className="font-[family-name:var(--font-hand)] text-2xl text-white/30">
-          {progress.completedPuzzles.length === 0 && "find the way..."}
-          {progress.completedPuzzles.length > 0 && progress.completedPuzzles.length < 5 && "keep going..."}
-        </h1>
+        <p className="font-[family-name:var(--font-hand)] text-lg text-white/30">
+          {progress.viewedCards?.length === 0 && "tap to open..."}
+          {progress.viewedCards?.length > 0 && progress.viewedCards?.length < 3 && "keep going..."}
+          {progress.viewedCards?.length === 3 && "🍓 ready for the game!"}
+        </p>
       </motion.div>
 
-      {/* Decorative stickers */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="absolute bottom-8 right-8 font-[family-name:var(--font-spray)] text-sm text-white/20 rotate-3"
-      >
-        {progress.completedPuzzles.length}/5
-      </motion.div>
+      {/* Card modal */}
+      <AnimatePresence>
+        {selectedCard !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+            onClick={handleCloseCard}
+          >
+            <motion.div
+              initial={{ scale: 0.5, rotate: -10 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0.5, rotate: 10, opacity: 0 }}
+              className="relative max-w-sm w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Card video or image */}
+              {CARDS[selectedCard - 1]?.video ? (
+                <video
+                  autoPlay
+                  loop
+                  playsInline
+                  muted={false}
+                  className="w-full rounded-sm shadow-2xl"
+                >
+                  <source src={CARDS[selectedCard - 1].video!} type="video/mp4" />
+                </video>
+              ) : (
+                <div
+                  className="w-full aspect-square rounded-sm overflow-hidden shadow-2xl"
+                  style={{
+                    backgroundImage: `url(${CARDS[selectedCard - 1]?.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#c41e3a',
+                  }}
+                />
+              )}
+
+              {/* Close hint */}
+              <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
+                tap anywhere to close
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

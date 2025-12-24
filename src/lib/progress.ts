@@ -1,13 +1,15 @@
-const STORAGE_KEY = 'arthur4lyf_progress';
+const STORAGE_KEY = 'liv_christmas_progress';
 
 export interface Progress {
   unlocked: boolean;
-  completedPuzzles: number[];
+  viewedCards: number[];
+  gameCompleted: boolean;
 }
 
 const defaultProgress: Progress = {
   unlocked: false,
-  completedPuzzles: [],
+  viewedCards: [],
+  gameCompleted: false,
 };
 
 export function getProgress(): Progress {
@@ -16,7 +18,7 @@ export function getProgress(): Progress {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return defaultProgress;
-    return JSON.parse(stored);
+    return { ...defaultProgress, ...JSON.parse(stored) };
   } catch {
     return defaultProgress;
   }
@@ -28,30 +30,26 @@ export function setUnlocked(unlocked: boolean): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
-export function completePuzzle(puzzleId: number): void {
+export function setCardViewed(cardId: number): void {
   const progress = getProgress();
-  if (!progress.completedPuzzles.includes(puzzleId)) {
-    progress.completedPuzzles.push(puzzleId);
+  if (!progress.viewedCards.includes(cardId)) {
+    progress.viewedCards.push(cardId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   }
 }
 
-export function isPuzzleCompleted(puzzleId: number): boolean {
-  return getProgress().completedPuzzles.includes(puzzleId);
+export function isAllCardsViewed(): boolean {
+  return getProgress().viewedCards.length >= 3;
 }
 
-export function getNextPuzzle(): number {
+export function setGameCompleted(): void {
   const progress = getProgress();
-  for (let i = 1; i <= 5; i++) {
-    if (!progress.completedPuzzles.includes(i)) {
-      return i;
-    }
-  }
-  return 6; // All complete, go to finale
+  progress.gameCompleted = true;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
-export function isAllComplete(): boolean {
-  return getProgress().completedPuzzles.length >= 5;
+export function isGameCompleted(): boolean {
+  return getProgress().gameCompleted;
 }
 
 export function resetProgress(): void {

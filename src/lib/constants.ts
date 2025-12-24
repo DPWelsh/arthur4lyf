@@ -1,6 +1,6 @@
-// Password (Arthur backwards)
-export const PASSWORD = 'ruhtра';
-export const PASSWORD_LOWER = 'ruhtra';
+// Password
+export const PASSWORD = 'yoda';
+export const PASSWORD_LOWER = 'yoda';
 
 // Puzzle content - replace placeholders with real content
 export const MEMORY_CARDS = [
@@ -25,12 +25,20 @@ export const AUDIO_FILE = '/audio/clip.mp3';
 export const AUDIO_ANSWER = 'temple';
 
 // Finale content
-export const FINALE_MESSAGE = `
-Hey you found it!
+export const FINALE_MESSAGE = `Merry Christmas qt pie`;
 
-[Your heartfelt message here]
-
-Meet me at [location] for your real gift.
-
-Love always.
-`;
+// Card data - image, video, and messages
+export const CARDS = [
+  {
+    image: '/images/card-1.jpg',
+    video: 'https://res.cloudinary.com/dm3cqsapn/video/upload/v1766606138/slay_kqcslf.mp4',
+  },
+  {
+    image: '/images/card-2.jpg',
+    video: 'https://res.cloudinary.com/dm3cqsapn/video/upload/v1766606130/deer_zfo1gv.mp4',
+  },
+  {
+    image: '/images/card-3.jpg',
+    video: 'https://res.cloudinary.com/dm3cqsapn/video/upload/v1766606131/santa-elf_aqj5jz.mp4',
+  },
+];
