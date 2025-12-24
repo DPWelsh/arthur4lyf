@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Permanent_Marker, Caveat } from "next/font/google";
 import "./globals.css";
+import Snow from "@/components/Snow";
 
 const permanentMarker = Permanent_Marker({
   weight: "400",
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${permanentMarker.variable} ${caveat.variable} antialiased noise-overlay`}
       >
+        <Snow count={25} />
         {children}
       </body>
     </html>

@@ -1,21 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { getProgress, getNextPuzzle, isAllComplete } from '@/lib/progress';
+import { getProgress, setCardViewed, isAllCardsViewed, isGameCompleted } from '@/lib/progress';
+import { CARDS } from '@/lib/constants';
 
-const PUZZLE_POSITIONS = [
-  { x: '15%', y: '25%', rotate: -8, label: '???' },
-  { x: '70%', y: '20%', rotate: 5, label: '???' },
-  { x: '25%', y: '55%', rotate: -3, label: '???' },
-  { x: '65%', y: '60%', rotate: 7, label: '???' },
-  { x: '45%', y: '80%', rotate: -5, label: '???' },
+const CARD_POSITIONS = [
+  { x: '18%', y: '28%', rotate: -8 },
+  { x: '40%', y: '58%', rotate: 3 },
+  { x: '62%', y: '30%', rotate: -4 },
 ];
 
 export default function Hub() {
-  const [progress, setProgress] = useState({ completedPuzzles: [] as number[], unlocked: false });
+  const [progress, setProgress] = useState({ viewedCards: [] as number[], unlocked: false });
   const [mounted, setMounted] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [gameCompleted, setGameCompletedState] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,136 +30,264 @@ export default function Hub() {
       return;
     }
     setProgress(p);
-
-    if (isAllComplete()) {
-      router.push('/finale');
-    }
+    setGameCompletedState(isGameCompleted());
   }, [router]);
 
-  const nextPuzzle = getNextPuzzle();
+  const handleCardClick = (cardId: number) => {
+    setSelectedCard(cardId);
+    setShowVideo(false);
+    setSelectedAnswer(null);
+  };
 
-  const handlePuzzleClick = (puzzleId: number) => {
-    if (puzzleId <= nextPuzzle) {
-      router.push(`/puzzle/${puzzleId}`);
+  const handleAnswerClick = (answerIdx: number) => {
+    setSelectedAnswer(answerIdx);
+    // Show video after a brief delay for the answer highlight
+    setTimeout(() => {
+      setShowVideo(true);
+      // Play video once it's shown
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.play().catch(() => {
+            // Autoplay blocked or load error - video will still be visible
+          });
+        }
+      }, 100);
+    }, 800);
+  };
+
+  const handleCloseCard = () => {
+    if (selectedCard !== null) {
+      setCardViewed(selectedCard);
+      setProgress(getProgress());
+      setSelectedCard(null);
+      setShowVideo(false);
+      setSelectedAnswer(null);
+
+      // Check if all cards viewed - unlock the game (only auto-redirect first time)
+      if (isAllCardsViewed() && !gameCompleted) {
+        setTimeout(() => {
+          router.push('/game');
+        }, 500);
+      }
     }
   };
 
   if (!mounted) return null;
 
+  const currentCard = selectedCard ? CARDS[selectedCard - 1] : null;
+
   return (
     <main className="relative h-screen w-screen bg-[#1a1a1a] overflow-hidden">
-      {/* Chaotic background collage */}
+      {/* Background Christmas elements */}
       <div className="absolute inset-0">
-        {/* Spray paint splatters */}
-        <div className="absolute top-[10%] left-[5%] w-32 h-32 rounded-full bg-[#ff6b35]/20 blur-xl" />
-        <div className="absolute top-[60%] right-[10%] w-48 h-48 rounded-full bg-[#00d4aa]/15 blur-2xl" />
-        <div className="absolute bottom-[20%] left-[20%] w-24 h-24 rounded-full bg-white/10 blur-lg" />
+        <div className="absolute top-[10%] left-[5%] w-32 h-32 rounded-full bg-[#c41e3a]/20 blur-xl" />
+        <div className="absolute top-[60%] right-[10%] w-48 h-48 rounded-full bg-[#228b22]/15 blur-2xl" />
+        <div className="absolute bottom-[20%] left-[20%] w-24 h-24 rounded-full bg-[#ffd700]/10 blur-lg" />
 
-        {/* Random scrawls and marks */}
-        <div className="absolute top-[5%] right-[15%] text-4xl opacity-20 rotate-12 font-[family-name:var(--font-spray)]">✗</div>
-        <div className="absolute top-[40%] left-[8%] text-3xl opacity-15 -rotate-6 font-[family-name:var(--font-spray)]">★</div>
-        <div className="absolute bottom-[10%] right-[25%] text-5xl opacity-10 rotate-45">◯</div>
-        <div className="absolute top-[70%] left-[60%] text-2xl opacity-20 -rotate-12">△</div>
-
-        {/* Torn paper texture lines */}
-        <div className="absolute top-0 left-[30%] w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
-        <div className="absolute top-0 left-[70%] w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
+        {/* Christmas graffiti elements */}
+        <div className="absolute top-[5%] right-[15%] text-4xl opacity-20 rotate-12">❄</div>
+        <div className="absolute top-[40%] left-[8%] text-3xl opacity-15 -rotate-6 text-[#228b22]">★</div>
+        <div className="absolute bottom-[10%] right-[25%] text-5xl opacity-15 rotate-45 text-[#c41e3a]">❄</div>
       </div>
 
-      {/* Progress indicator - 5 small tags */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {[1, 2, 3, 4, 5].map((id) => (
+      {/* String lights */}
+      <div className="absolute top-0 left-0 right-0 h-6 flex justify-around items-center opacity-50 z-10">
+        {[...Array(15)].map((_, i) => (
           <motion.div
-            key={id}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: id * 0.1 }}
-            className={`w-3 h-3 rounded-full border-2 ${
-              progress.completedPuzzles.includes(id)
-                ? 'bg-[#00d4aa] border-[#00d4aa]'
-                : id === nextPuzzle
-                ? 'bg-transparent border-[#ff6b35] animate-pulse'
-                : 'bg-transparent border-white/30'
-            }`}
+            key={i}
+            className={`w-2 h-2 rounded-full ${i % 3 === 0 ? 'bg-[#c41e3a]' : i % 3 === 1 ? 'bg-[#228b22]' : 'bg-[#ffd700]'}`}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
+            style={{ boxShadow: `0 0 6px ${i % 3 === 0 ? '#c41e3a' : i % 3 === 1 ? '#228b22' : '#ffd700'}` }}
           />
         ))}
       </div>
 
-      {/* Puzzle entry points */}
-      <AnimatePresence>
-        {PUZZLE_POSITIONS.map((pos, idx) => {
-          const puzzleId = idx + 1;
-          const isCompleted = progress.completedPuzzles.includes(puzzleId);
-          const isAvailable = puzzleId <= nextPuzzle;
-          const isNext = puzzleId === nextPuzzle;
-
-          if (!isAvailable) return null;
-
-          return (
-            <motion.button
-              key={puzzleId}
-              initial={{ opacity: 0, scale: 0, rotate: pos.rotate - 20 }}
-              animate={{ opacity: 1, scale: 1, rotate: pos.rotate }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{ delay: puzzleId * 0.15, type: 'spring' }}
-              onClick={() => handlePuzzleClick(puzzleId)}
-              className={`absolute touch-highlight ${
-                isCompleted ? 'opacity-50' : ''
+      {/* Progress indicator */}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20">
+        <div className="flex gap-2">
+          {[1, 2, 3].map((id) => (
+            <motion.div
+              key={id}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: id * 0.1 }}
+              className={`w-3 h-3 rounded-full border-2 ${
+                progress.viewedCards?.includes(id)
+                  ? 'bg-[#228b22] border-[#228b22]'
+                  : 'bg-transparent border-white/30'
               }`}
+            />
+          ))}
+        </div>
+        {gameCompleted && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push('/game')}
+            className="font-[family-name:var(--font-hand)] text-2xl text-white/50 hover:text-white/80 transition-colors"
+          >
+            play: tassie farm fruit picking
+          </motion.button>
+        )}
+      </div>
+
+      {/* Clickable funny cards - BIGGER */}
+      {CARD_POSITIONS.map((pos, idx) => {
+        const cardId = idx + 1;
+        const isViewed = progress.viewedCards?.includes(cardId);
+
+        return (
+          <motion.button
+            key={cardId}
+            initial={{ opacity: 0, scale: 0, rotate: pos.rotate - 20 }}
+            animate={{ opacity: 1, scale: 1, rotate: pos.rotate }}
+            transition={{ delay: cardId * 0.2, type: 'spring' }}
+            onClick={() => handleCardClick(cardId)}
+            className={`absolute touch-highlight ${isViewed ? 'opacity-60' : ''}`}
+            style={{
+              left: pos.x,
+              top: pos.y,
+              transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+            }}
+          >
+            <div
+              className={`relative w-40 h-52 sm:w-52 sm:h-64 rounded-sm overflow-hidden
+                        ${isViewed ? 'grayscale' : ''}
+                        sticker cursor-pointer hover:scale-105 transition-transform`}
               style={{
-                left: pos.x,
-                top: pos.y,
-                transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+                backgroundImage: `url(/images/card-${cardId}.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: isViewed ? '#444' : '#c41e3a',
               }}
             >
-              <div
-                className={`relative px-6 py-4 font-[family-name:var(--font-spray)] text-xl
-                          ${isCompleted
-                            ? 'bg-[#00d4aa]/80 text-[#1a1a1a]'
-                            : isNext
-                            ? 'bg-[#ff6b35] text-[#1a1a1a]'
-                            : 'bg-white/90 text-[#1a1a1a]'
-                          }
-                          sticker`}
-              >
-                {isCompleted ? '✓' : isNext ? '?' : pos.label}
+              {/* Viewed checkmark */}
+              {isViewed && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <span className="text-4xl text-[#228b22]">✓</span>
+                </div>
+              )}
+            </div>
+          </motion.button>
+        );
+      })}
 
-                {/* Animated glow for next puzzle */}
-                {isNext && !isCompleted && (
-                  <motion.div
-                    className="absolute inset-0 bg-[#ff6b35] rounded-sm -z-10"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+      {/* Center hint */}
+      {!gameCompleted && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center pointer-events-none"
+        >
+          <p className="font-[family-name:var(--font-hand)] text-lg text-white/30">
+            {progress.viewedCards?.length === 0 && "tap to open..."}
+            {progress.viewedCards?.length > 0 && progress.viewedCards?.length < 3 && "keep going..."}
+            {progress.viewedCards?.length === 3 && "ready for tassie farm..."}
+          </p>
+        </motion.div>
+      )}
+
+      {/* Card modal with question then video */}
+      <AnimatePresence>
+        {selectedCard !== null && currentCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={showVideo ? handleCloseCard : undefined}
+          >
+            <AnimatePresence mode="wait">
+              {!showVideo ? (
+                /* Question screen */
+                <motion.div
+                  key="question"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0, y: -50 }}
+                  className="bg-amber-50 p-6 sm:p-8 rounded-sm torn-edge max-w-sm w-full"
+                >
+                  {/* Hidden video preloading while question is shown */}
+                  <video
+                    ref={videoRef}
+                    src={currentCard.video}
+                    preload="auto"
+                    playsInline
+                    loop
+                    muted
+                    className="hidden"
                   />
-                )}
-              </div>
-            </motion.button>
-          );
-        })}
+
+                  <h2 className="font-[family-name:var(--font-spray)] text-2xl sm:text-3xl text-[#c41e3a] text-center mb-6">
+                    {currentCard.question}
+                  </h2>
+
+                  <div className="space-y-3">
+                    {currentCard.options.map((option, idx) => {
+                      const isSelected = selectedAnswer === idx;
+
+                      return (
+                        <motion.button
+                          key={idx}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => selectedAnswer === null && handleAnswerClick(idx)}
+                          disabled={selectedAnswer !== null}
+                          className={`w-full p-3 sm:p-4 rounded-sm text-left transition-all
+                            font-[family-name:var(--font-hand)] text-lg sm:text-xl
+                            ${selectedAnswer === null
+                              ? 'bg-white hover:bg-[#ffd700]/20 text-zinc-700 border-2 border-zinc-200'
+                              : isSelected
+                                ? 'bg-[#228b22] text-white border-2 border-[#228b22]'
+                                : 'bg-zinc-100 text-zinc-400 border-2 border-zinc-200'
+                            }`}
+                        >
+                          {option}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedAnswer !== null && (
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center mt-4 font-[family-name:var(--font-hand)] text-lg text-[#228b22]"
+                    >
+                      Nailed it! 🎄
+                    </motion.p>
+                  )}
+                </motion.div>
+              ) : (
+                /* Video screen */
+                <motion.div
+                  key="video"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  className="relative max-w-sm w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <video
+                    ref={videoRef}
+                    src={currentCard.video}
+                    loop
+                    playsInline
+                    muted
+                    className="w-full rounded-sm shadow-2xl"
+                  />
+
+                  <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
+                    tap anywhere to close
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </AnimatePresence>
-
-      {/* Center title/hint */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none"
-      >
-        <h1 className="font-[family-name:var(--font-hand)] text-2xl text-white/30">
-          {progress.completedPuzzles.length === 0 && "find the way..."}
-          {progress.completedPuzzles.length > 0 && progress.completedPuzzles.length < 5 && "keep going..."}
-        </h1>
-      </motion.div>
-
-      {/* Decorative stickers */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="absolute bottom-8 right-8 font-[family-name:var(--font-spray)] text-sm text-white/20 rotate-3"
-      >
-        {progress.completedPuzzles.length}/5
-      </motion.div>
     </main>
   );
 }
