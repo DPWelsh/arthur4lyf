@@ -92,8 +92,9 @@ export default function StrawberryGame() {
         lastSpawnRef.current = timestamp;
       }
 
-      // Update and draw strawberries - lower catch zone to match sprite
-      const catchZoneY = canvas.height * 0.85;
+      // Update and draw strawberries - adjust catch zone for mobile browser tabs
+      const isMobile = canvas.width < 640;
+      const catchZoneY = isMobile ? canvas.height * 0.75 : canvas.height * 0.85;
       const catchHeight = canvas.height * 0.10;
 
       strawberriesRef.current = strawberriesRef.current.filter((s) => {
@@ -210,7 +211,7 @@ export default function StrawberryGame() {
       {/* Fruit picker (Liv) */}
       {gameStarted && !gameWon && (
         <div
-          className="absolute bottom-8"
+          className="absolute bottom-24 sm:bottom-8"
           style={{
             left: `${basketX}%`,
             transform: 'translateX(-50%)',

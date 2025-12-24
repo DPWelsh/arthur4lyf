@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { getProgress, isGameCompleted } from '@/lib/progress';
@@ -14,6 +14,8 @@ export default function Finale() {
   const [revealed, setRevealed] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [needsTap, setNeedsTap] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
   const handleVideoError = () => {
@@ -22,6 +24,22 @@ export default function Finale() {
 
   const handleRetry = () => {
     setVideoFailed(false);
+  };
+
+  const handleCanPlay = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Autoplay blocked - need user gesture
+        setNeedsTap(true);
+      });
+    }
+  };
+
+  const handleTapToPlay = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setNeedsTap(false);
+    }
   };
 
   useEffect(() => {

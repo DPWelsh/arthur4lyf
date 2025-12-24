@@ -19,6 +19,7 @@ export default function Hub() {
   const [showVideo, setShowVideo] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [gameCompleted, setGameCompletedState] = useState(false);
+  const [needsTap, setNeedsTap] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
@@ -44,15 +45,24 @@ export default function Hub() {
     // Show video after a brief delay for the answer highlight
     setTimeout(() => {
       setShowVideo(true);
+      setNeedsTap(false);
       // Play video once it's shown
       setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.play().catch(() => {
-            // Autoplay blocked or load error - video will still be visible
+            // Autoplay blocked - need user gesture
+            setNeedsTap(true);
           });
         }
       }, 100);
     }, 800);
+  };
+
+  const handleTapToPlay = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setNeedsTap(false);
+    }
   };
 
   const handleCloseCard = () => {
@@ -270,14 +280,26 @@ export default function Hub() {
                   className="relative max-w-sm w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <video
-                    ref={videoRef}
-                    src={currentCard.video}
-                    loop
-                    playsInline
-                    muted
-                    className="w-full rounded-sm shadow-2xl"
-                  />
+                  <div className="relative">
+                    <video
+                      ref={videoRef}
+                      src={currentCard.video}
+                      loop
+                      playsInline
+                      muted
+                      className="w-full rounded-sm shadow-2xl"
+                    />
+                    {needsTap && (
+                      <button
+                        onClick={handleTapToPlay}
+                        className="absolute inset-0 flex items-center justify-center bg-black/50"
+                      >
+                        <span className="font-[family-name:var(--font-hand)] text-xl text-white">
+                          tap to play
+                        </span>
+                      </button>
+                    )}
+                  </div>
 
                   <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
                     tap anywhere to close
