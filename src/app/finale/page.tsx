@@ -7,6 +7,8 @@ import { getProgress, isGameCompleted } from '@/lib/progress';
 import HomeButton from '@/components/HomeButton';
 import { FINALE_MESSAGE } from '@/lib/constants';
 
+const FINALE_VIDEO = 'https://res.cloudinary.com/dm3cqsapn/video/upload/v1766607837/dan-on-sled_aocmh7.mp4';
+
 export default function Finale() {
   const [mounted, setMounted] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -78,75 +80,62 @@ export default function Finale() {
         )}
       </AnimatePresence>
 
-      {/* Folded note reveal */}
+      {/* Gift box then video reveal */}
       <AnimatePresence>
         {!revealed ? (
           <motion.div
             initial={{ scale: 0.5, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{
-              scaleY: 0,
-              originY: 0,
-              transition: { duration: 0.8 },
+              scale: 0,
+              rotate: 10,
+              transition: { duration: 0.5 },
             }}
-            className="w-20 h-20 bg-[#c41e3a] rounded-sm shadow-2xl flex items-center justify-center"
-            style={{ transformOrigin: 'center top' }}
+            className="w-24 h-24 bg-[#c41e3a] rounded-sm shadow-2xl flex items-center justify-center"
           >
-            <span className="text-4xl">🎁</span>
+            <span className="text-5xl">🎁</span>
           </motion.div>
         ) : (
           <motion.div
-            initial={{ scaleY: 0, originY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             className="relative w-[90vw] max-w-md mx-4"
           >
-            {/* The revealed letter */}
-            <div
-              className="relative bg-amber-50 p-8 sm:p-10 rounded-sm torn-edge"
-              style={{
-                boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-              }}
-            >
-              {/* Tape decorations */}
-              <div className="absolute -top-2 left-8 w-12 h-5 bg-yellow-100/80 rotate-3" />
-              <div className="absolute -top-2 right-8 w-12 h-5 bg-yellow-100/80 -rotate-2" />
-
-              {/* Message content */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-center"
-              >
-                <p className="font-[family-name:var(--font-spray)] text-4xl sm:text-5xl text-[#c41e3a] mb-4">
-                  {FINALE_MESSAGE}
-                </p>
-                <p className="font-[family-name:var(--font-hand)] text-xl text-zinc-600">
-                  🍓❤️🎄
-                </p>
-              </motion.div>
-
-              {/* Signature flourish */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 }}
-                className="mt-6 text-center"
-              >
-                <span className="font-[family-name:var(--font-hand)] text-2xl text-zinc-500">
-                  - D x
-                </span>
-              </motion.div>
-            </div>
-
-            {/* Glow behind */}
+            {/* Message above video */}
             <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.3 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="absolute -inset-8 -z-10 rounded-full bg-gradient-radial from-[#c41e3a]/30 to-transparent blur-2xl"
-            />
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-4 text-center"
+            >
+              <p className="font-[family-name:var(--font-spray)] text-3xl sm:text-4xl text-[#c41e3a]">
+                {FINALE_MESSAGE}
+              </p>
+            </motion.div>
+
+            {/* Video */}
+            <video
+              autoPlay
+              loop
+              playsInline
+              muted
+              className="w-full rounded-sm shadow-2xl"
+            >
+              <source src={FINALE_VIDEO} type="video/mp4" />
+            </video>
+
+            {/* Signature below video */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4 text-center"
+            >
+              <p className="font-[family-name:var(--font-hand)] text-xl text-white/60">
+                from your secret admirer x
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

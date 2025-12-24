@@ -7,6 +7,7 @@ import { getProgress, setGameCompleted, isAllCardsViewed } from '@/lib/progress'
 import HomeButton from '@/components/HomeButton';
 
 const WIN_SCORE = 10;
+const FINALE_VIDEO = 'https://res.cloudinary.com/dm3cqsapn/video/upload/v1766607837/dan-on-sled_aocmh7.mp4';
 
 export default function StrawberryGame() {
   const [mounted, setMounted] = useState(false);
@@ -54,13 +55,19 @@ export default function StrawberryGame() {
     if (!ctx) return;
 
     // Set canvas size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
     // Load Ruben image
     if (!rubenImg.current) {
-      rubenImg.current = new Image();
-      rubenImg.current.src = '/images/ruben-sprite.png';
+      const img = new Image();
+      img.src = '/images/ruben-sprite.png';
+      img.onerror = () => console.warn('Failed to load Ruben sprite');
+      rubenImg.current = img;
     }
 
     const strawberryEmoji = '🍓';
@@ -152,6 +159,7 @@ export default function StrawberryGame() {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      window.removeEventListener('resize', resizeCanvas);
     };
   }, [gameStarted, gameWon]);
 
@@ -280,6 +288,15 @@ export default function StrawberryGame() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Preload finale video while playing */}
+      <video
+        src={FINALE_VIDEO}
+        preload="auto"
+        muted
+        playsInline
+        className="hidden"
+      />
     </main>
   );
 }

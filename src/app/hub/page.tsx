@@ -1,21 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { getProgress, setCardViewed, isAllCardsViewed } from '@/lib/progress';
 import { CARDS } from '@/lib/constants';
 
 const CARD_POSITIONS = [
-  { x: '20%', y: '30%', rotate: -8 },
-  { x: '50%', y: '50%', rotate: 3 },
-  { x: '75%', y: '35%', rotate: -4 },
+  { x: '18%', y: '28%', rotate: -8 },
+  { x: '40%', y: '58%', rotate: 3 },
+  { x: '62%', y: '30%', rotate: -4 },
 ];
 
 export default function Hub() {
   const [progress, setProgress] = useState({ viewedCards: [] as number[], unlocked: false });
   const [mounted, setMounted] = useState(false);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,6 +33,20 @@ export default function Hub() {
 
   const handleCardClick = (cardId: number) => {
     setSelectedCard(cardId);
+    setShowVideo(false);
+    setSelectedAnswer(null);
+  };
+
+  const handleAnswerClick = (answerIdx: number) => {
+    setSelectedAnswer(answerIdx);
+    // Show video after a brief delay for the answer highlight
+    setTimeout(() => {
+      setShowVideo(true);
+      // Play video once it's shown
+      setTimeout(() => {
+        videoRef.current?.play();
+      }, 100);
+    }, 800);
   };
 
   const handleCloseCard = () => {
@@ -37,6 +54,8 @@ export default function Hub() {
       setCardViewed(selectedCard);
       setProgress(getProgress());
       setSelectedCard(null);
+      setShowVideo(false);
+      setSelectedAnswer(null);
 
       // Check if all cards viewed - unlock the game
       if (isAllCardsViewed()) {
@@ -48,6 +67,8 @@ export default function Hub() {
   };
 
   if (!mounted) return null;
+
+  const currentCard = selectedCard ? CARDS[selectedCard - 1] : null;
 
   return (
     <main className="relative h-screen w-screen bg-[#1a1a1a] overflow-hidden">
@@ -93,7 +114,7 @@ export default function Hub() {
         ))}
       </div>
 
-      {/* Clickable funny cards */}
+      {/* Clickable funny cards - BIGGER */}
       {CARD_POSITIONS.map((pos, idx) => {
         const cardId = idx + 1;
         const isViewed = progress.viewedCards?.includes(cardId);
@@ -113,7 +134,7 @@ export default function Hub() {
             }}
           >
             <div
-              className={`relative w-28 h-36 sm:w-32 sm:h-40 rounded-sm overflow-hidden
+              className={`relative w-40 h-52 sm:w-52 sm:h-64 rounded-sm overflow-hidden
                         ${isViewed ? 'grayscale' : ''}
                         sticker cursor-pointer hover:scale-105 transition-transform`}
               style={{
@@ -123,17 +144,10 @@ export default function Hub() {
                 backgroundColor: isViewed ? '#444' : '#c41e3a',
               }}
             >
-              {/* Placeholder if no image yet */}
-              {!isViewed && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl">🎁</span>
-                </div>
-              )}
-
               {/* Viewed checkmark */}
               {isViewed && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <span className="text-3xl text-[#228b22]">✓</span>
+                  <span className="text-4xl text-[#228b22]">✓</span>
                 </div>
               )}
             </div>
@@ -146,7 +160,7 @@ export default function Hub() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center pointer-events-none"
+        className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center pointer-events-none"
       >
         <p className="font-[family-name:var(--font-hand)] text-lg text-white/30">
           {progress.viewedCards?.length === 0 && "tap to open..."}
@@ -155,51 +169,101 @@ export default function Hub() {
         </p>
       </motion.div>
 
-      {/* Card modal */}
+      {/* Card modal with question then video */}
       <AnimatePresence>
-        {selectedCard !== null && (
+        {selectedCard !== null && currentCard && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
-            onClick={handleCloseCard}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={showVideo ? handleCloseCard : undefined}
           >
-            <motion.div
-              initial={{ scale: 0.5, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0.5, rotate: 10, opacity: 0 }}
-              className="relative max-w-sm w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Card video or image */}
-              {CARDS[selectedCard - 1]?.video ? (
-                <video
-                  autoPlay
-                  loop
-                  playsInline
-                  muted={false}
-                  className="w-full rounded-sm shadow-2xl"
-                >
-                  <source src={CARDS[selectedCard - 1].video!} type="video/mp4" />
-                </video>
-              ) : (
-                <div
-                  className="w-full aspect-square rounded-sm overflow-hidden shadow-2xl"
-                  style={{
-                    backgroundImage: `url(${CARDS[selectedCard - 1]?.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundColor: '#c41e3a',
-                  }}
-                />
-              )}
+            {/* Hidden video preloading while question is shown */}
+            <video
+              ref={videoRef}
+              src={currentCard.video}
+              preload="auto"
+              playsInline
+              loop
+              className="hidden"
+            />
 
-              {/* Close hint */}
-              <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
-                tap anywhere to close
-              </p>
-            </motion.div>
+            <AnimatePresence mode="wait">
+              {!showVideo ? (
+                /* Question screen */
+                <motion.div
+                  key="question"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0, y: -50 }}
+                  className="bg-amber-50 p-6 sm:p-8 rounded-sm torn-edge max-w-sm w-full"
+                >
+                  <h2 className="font-[family-name:var(--font-spray)] text-2xl sm:text-3xl text-[#c41e3a] text-center mb-6">
+                    {currentCard.question}
+                  </h2>
+
+                  <div className="space-y-3">
+                    {currentCard.options.map((option, idx) => {
+                      const isSelected = selectedAnswer === idx;
+
+                      return (
+                        <motion.button
+                          key={idx}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => selectedAnswer === null && handleAnswerClick(idx)}
+                          disabled={selectedAnswer !== null}
+                          className={`w-full p-3 sm:p-4 rounded-sm text-left transition-all
+                            font-[family-name:var(--font-hand)] text-lg sm:text-xl
+                            ${selectedAnswer === null
+                              ? 'bg-white hover:bg-[#ffd700]/20 text-zinc-700 border-2 border-zinc-200'
+                              : isSelected
+                                ? 'bg-[#228b22] text-white border-2 border-[#228b22]'
+                                : 'bg-zinc-100 text-zinc-400 border-2 border-zinc-200'
+                            }`}
+                        >
+                          {option}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedAnswer !== null && (
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center mt-4 font-[family-name:var(--font-hand)] text-lg text-[#228b22]"
+                    >
+                      Nailed it! 🎄
+                    </motion.p>
+                  )}
+                </motion.div>
+              ) : (
+                /* Video screen */
+                <motion.div
+                  key="video"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  className="relative max-w-sm w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <video
+                    autoPlay
+                    loop
+                    playsInline
+                    muted
+                    className="w-full rounded-sm shadow-2xl"
+                  >
+                    <source src={currentCard.video} type="video/mp4" />
+                  </video>
+
+                  <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
+                    tap anywhere to close
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
