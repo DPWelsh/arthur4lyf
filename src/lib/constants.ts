@@ -25,7 +25,7 @@ export const AUDIO_FILE = '/audio/clip.mp3';
 export const AUDIO_ANSWER = 'temple';
 
 // Finale content
-export const FINALE_MESSAGE = `Merry Christmas`;
+export const FINALE_MESSAGE = `UR HOT`;
 
 // Card data - image, video, and questions
 // Secret: ALL answers are correct - she just doesn't know it

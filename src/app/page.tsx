@@ -84,7 +84,7 @@ export default function PasswordGate() {
                   display: 'inline-block'
                 }}
               >
-                MERRY CHRISTMAS
+                CHRISTMAS IS HERE
               </span>
             {/* Tag name - graffiti style */}
             <motion.h1
@@ -94,7 +94,7 @@ export default function PasswordGate() {
                 transform: 'rotate(-2deg)'
               }}
             >
-              Olivia 
+              Olivia G 
             </motion.h1>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -202,17 +202,6 @@ export default function PasswordGate() {
           </>
         )}
       </AnimatePresence>
-
-      {/* Reset button */}
-      <button
-        onClick={() => {
-          resetProgress();
-          window.location.reload();
-        }}
-        className="absolute bottom-4 right-4 font-[family-name:var(--font-hand)] text-xs text-white/20 hover:text-white/50"
-      >
-        reset
-      </button>
     </main>
   );
 }
