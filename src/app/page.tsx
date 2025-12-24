@@ -161,15 +161,23 @@ export default function PasswordGate() {
             </AnimatePresence>
           </motion.div>
         ) : (
-          /* Unlock animation - page tears away */
+          /* Unlock animation - loading state */
           <motion.div
-            initial={{ opacity: 1 }}
-            animate={{
-              clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)',
-            }}
-            transition={{ duration: 1.2, ease: 'easeInOut' }}
-            className="absolute inset-0 bg-[#1a1a1a] z-50"
-          />
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center gap-6 z-10"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+              className="text-6xl"
+            >
+              ❄
+            </motion.div>
+            <p className="font-[family-name:var(--font-hand)] text-xl text-white/60">
+              opening...
+            </p>
+          </motion.div>
         )}
       </AnimatePresence>
 
