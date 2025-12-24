@@ -200,16 +200,6 @@ export default function Hub() {
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
             onClick={showVideo ? handleCloseCard : undefined}
           >
-            {/* Hidden video preloading while question is shown */}
-            <video
-              ref={videoRef}
-              src={currentCard.video}
-              preload="auto"
-              playsInline
-              loop
-              className="hidden"
-            />
-
             <AnimatePresence mode="wait">
               {!showVideo ? (
                 /* Question screen */
@@ -220,6 +210,17 @@ export default function Hub() {
                   exit={{ scale: 0.8, opacity: 0, y: -50 }}
                   className="bg-amber-50 p-6 sm:p-8 rounded-sm torn-edge max-w-sm w-full"
                 >
+                  {/* Hidden video preloading while question is shown */}
+                  <video
+                    ref={videoRef}
+                    src={currentCard.video}
+                    preload="auto"
+                    playsInline
+                    loop
+                    muted
+                    className="hidden"
+                  />
+
                   <h2 className="font-[family-name:var(--font-spray)] text-2xl sm:text-3xl text-[#c41e3a] text-center mb-6">
                     {currentCard.question}
                   </h2>
@@ -270,14 +271,13 @@ export default function Hub() {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <video
-                    autoPlay
+                    ref={videoRef}
+                    src={currentCard.video}
                     loop
                     playsInline
                     muted
                     className="w-full rounded-sm shadow-2xl"
-                  >
-                    <source src={currentCard.video} type="video/mp4" />
-                  </video>
+                  />
 
                   <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
                     tap anywhere to close
