@@ -208,7 +208,6 @@ export default function Hub() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-            onClick={showVideo ? handleCloseCard : undefined}
           >
             <AnimatePresence mode="wait">
               {!showVideo ? (
@@ -280,6 +279,14 @@ export default function Hub() {
                   className="relative max-w-sm w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
+                  {/* Close button */}
+                  <button
+                    onClick={handleCloseCard}
+                    className="absolute -top-2 -right-2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center z-10"
+                  >
+                    <span className="text-white text-xl leading-none">&times;</span>
+                  </button>
+
                   <div className="relative">
                     <video
                       ref={videoRef}
@@ -294,16 +301,12 @@ export default function Hub() {
                         onClick={handleTapToPlay}
                         className="absolute inset-0 flex items-center justify-center bg-black/50"
                       >
-                        <span className="font-[family-name:var(--font-hand)] text-xl text-white">
-                          tap to play
-                        </span>
+                        <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
+                          <span className="text-white text-3xl ml-1">&#9658;</span>
+                        </div>
                       </button>
                     )}
                   </div>
-
-                  <p className="font-[family-name:var(--font-hand)] text-sm text-white/60 text-center mt-4">
-                    tap anywhere to close
-                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
