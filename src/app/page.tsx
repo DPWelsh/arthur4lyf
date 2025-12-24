@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { PASSWORD_LOWER } from '@/lib/constants';
-import { getProgress, setUnlocked } from '@/lib/progress';
+import { getProgress, setUnlocked, resetProgress } from '@/lib/progress';
 
 export default function PasswordGate() {
   const [password, setPassword] = useState('');
@@ -202,6 +202,17 @@ export default function PasswordGate() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Reset button */}
+      <button
+        onClick={() => {
+          resetProgress();
+          window.location.reload();
+        }}
+        className="absolute bottom-4 right-4 font-[family-name:var(--font-hand)] text-xs text-white/20 hover:text-white/50"
+      >
+        reset
+      </button>
     </main>
   );
 }
