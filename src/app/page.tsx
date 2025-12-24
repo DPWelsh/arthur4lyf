@@ -9,6 +9,7 @@ import { getProgress, setUnlocked } from '@/lib/progress';
 export default function PasswordGate() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+  const [wrongGuesses, setWrongGuesses] = useState(0);
   const [unlocking, setUnlocking] = useState(false);
   const router = useRouter();
 
@@ -31,6 +32,7 @@ export default function PasswordGate() {
       }, 1500);
     } else {
       setError(true);
+      setWrongGuesses((prev) => prev + 1);
       setTimeout(() => setError(false), 500);
     }
   };
@@ -127,7 +129,9 @@ export default function PasswordGate() {
 
               {/* Password hint */}
               <p className="font-[family-name:var(--font-hand)] text-sm text-white/40 -mt-2">
-                hint: a special someone who will be the name of your next company
+                {wrongGuesses >= 3
+                  ? 'hint: four letter name for your pooch'
+                  : 'hint: your next company name'}
               </p>
 
               <motion.button
