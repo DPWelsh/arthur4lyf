@@ -45,22 +45,15 @@ export default function Hub() {
     // Show video after a brief delay for the answer highlight
     setTimeout(() => {
       setShowVideo(true);
-      setNeedsTap(false);
-      // Play video once it's shown
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.play().catch(() => {
-            // Autoplay blocked - need user gesture
-            setNeedsTap(true);
-          });
-        }
-      }, 100);
+      // Always show play button on mobile - autoplay rarely works
+      setNeedsTap(true);
     }, 800);
   };
 
   const handleTapToPlay = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
+    const video = document.querySelector('video[data-card-video]') as HTMLVideoElement;
+    if (video) {
+      video.play();
       setNeedsTap(false);
     }
   };
@@ -209,6 +202,17 @@ export default function Hub() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           >
+            {/* Single persistent video element */}
+            <video
+              ref={videoRef}
+              src={currentCard.video}
+              preload="auto"
+              playsInline
+              loop
+              muted
+              className={showVideo ? "hidden" : "hidden"}
+            />
+
             <AnimatePresence mode="wait">
               {!showVideo ? (
                 /* Question screen */
@@ -219,17 +223,6 @@ export default function Hub() {
                   exit={{ scale: 0.8, opacity: 0, y: -50 }}
                   className="bg-amber-50 p-6 sm:p-8 rounded-sm torn-edge max-w-sm w-full"
                 >
-                  {/* Hidden video preloading while question is shown */}
-                  <video
-                    ref={videoRef}
-                    src={currentCard.video}
-                    preload="auto"
-                    playsInline
-                    loop
-                    muted
-                    className="hidden"
-                  />
-
                   <h2 className="font-[family-name:var(--font-spray)] text-2xl sm:text-3xl text-[#c41e3a] text-center mb-6">
                     {currentCard.question}
                   </h2>
@@ -289,7 +282,7 @@ export default function Hub() {
 
                   <div className="relative">
                     <video
-                      ref={videoRef}
+                      data-card-video
                       src={currentCard.video}
                       loop
                       playsInline
@@ -299,7 +292,7 @@ export default function Hub() {
                     {needsTap && (
                       <button
                         onClick={handleTapToPlay}
-                        className="absolute inset-0 flex items-center justify-center bg-black/50"
+                        className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm"
                       >
                         <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
                           <span className="text-white text-3xl ml-1">&#9658;</span>
