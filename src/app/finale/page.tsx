@@ -13,7 +13,16 @@ export default function Finale() {
   const [mounted, setMounted] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
   const router = useRouter();
+
+  const handleVideoError = () => {
+    setVideoFailed(true);
+  };
+
+  const handleRetry = () => {
+    setVideoFailed(false);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -115,15 +124,35 @@ export default function Finale() {
             </motion.div>
 
             {/* Video */}
-            <video
-              autoPlay
-              loop
-              playsInline
-              muted
-              className="w-full rounded-sm shadow-2xl"
-            >
-              <source src={FINALE_VIDEO} type="video/mp4" />
-            </video>
+            {!videoFailed ? (
+              <video
+                autoPlay
+                loop
+                playsInline
+                muted
+                onError={handleVideoError}
+                className="w-full rounded-sm shadow-2xl"
+                aria-label="Surprise video message"
+              >
+                <source src={FINALE_VIDEO} type="video/mp4" />
+              </video>
+            ) : (
+              <div
+                className="w-full aspect-video bg-zinc-800 rounded-sm shadow-2xl flex flex-col items-center justify-center gap-4"
+                role="img"
+                aria-label="Video failed to load"
+              >
+                <p className="font-[family-name:var(--font-hand)] text-lg text-white/60">
+                  video failed to load
+                </p>
+                <button
+                  onClick={handleRetry}
+                  className="font-[family-name:var(--font-hand)] text-lg text-white/80 hover:text-white underline"
+                >
+                  tap to retry
+                </button>
+              </div>
+            )}
 
             {/* Signature below video */}
             <motion.div

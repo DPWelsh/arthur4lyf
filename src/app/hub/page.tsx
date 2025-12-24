@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { getProgress, setCardViewed, isAllCardsViewed } from '@/lib/progress';
+import { getProgress, setCardViewed, isAllCardsViewed, isGameCompleted } from '@/lib/progress';
 import { CARDS } from '@/lib/constants';
 
 const CARD_POSITIONS = [
@@ -18,6 +18,7 @@ export default function Hub() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [showVideo, setShowVideo] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [gameCompleted, setGameCompletedState] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
@@ -29,6 +30,7 @@ export default function Hub() {
       return;
     }
     setProgress(p);
+    setGameCompletedState(isGameCompleted());
   }, [router]);
 
   const handleCardClick = (cardId: number) => {
@@ -44,7 +46,11 @@ export default function Hub() {
       setShowVideo(true);
       // Play video once it's shown
       setTimeout(() => {
-        videoRef.current?.play();
+        if (videoRef.current) {
+          videoRef.current.play().catch(() => {
+            // Autoplay blocked or load error - video will still be visible
+          });
+        }
       }, 100);
     }, 800);
   };
@@ -57,8 +63,8 @@ export default function Hub() {
       setShowVideo(false);
       setSelectedAnswer(null);
 
-      // Check if all cards viewed - unlock the game
-      if (isAllCardsViewed()) {
+      // Check if all cards viewed - unlock the game (only auto-redirect first time)
+      if (isAllCardsViewed() && !gameCompleted) {
         setTimeout(() => {
           router.push('/game');
         }, 500);
@@ -98,20 +104,33 @@ export default function Hub() {
       </div>
 
       {/* Progress indicator */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {[1, 2, 3].map((id) => (
-          <motion.div
-            key={id}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: id * 0.1 }}
-            className={`w-3 h-3 rounded-full border-2 ${
-              progress.viewedCards?.includes(id)
-                ? 'bg-[#228b22] border-[#228b22]'
-                : 'bg-transparent border-white/30'
-            }`}
-          />
-        ))}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20">
+        <div className="flex gap-2">
+          {[1, 2, 3].map((id) => (
+            <motion.div
+              key={id}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: id * 0.1 }}
+              className={`w-3 h-3 rounded-full border-2 ${
+                progress.viewedCards?.includes(id)
+                  ? 'bg-[#228b22] border-[#228b22]'
+                  : 'bg-transparent border-white/30'
+              }`}
+            />
+          ))}
+        </div>
+        {gameCompleted && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push('/game')}
+            className="font-[family-name:var(--font-hand)] text-2xl text-white/50 hover:text-white/80 transition-colors"
+          >
+            play: tassie farm fruit picking
+          </motion.button>
+        )}
       </div>
 
       {/* Clickable funny cards - BIGGER */}
@@ -156,18 +175,20 @@ export default function Hub() {
       })}
 
       {/* Center hint */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center pointer-events-none"
-      >
-        <p className="font-[family-name:var(--font-hand)] text-lg text-white/30">
-          {progress.viewedCards?.length === 0 && "tap to open..."}
-          {progress.viewedCards?.length > 0 && progress.viewedCards?.length < 3 && "keep going..."}
-          {progress.viewedCards?.length === 3 && "🍓 ready for the game!"}
-        </p>
-      </motion.div>
+      {!gameCompleted && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center pointer-events-none"
+        >
+          <p className="font-[family-name:var(--font-hand)] text-lg text-white/30">
+            {progress.viewedCards?.length === 0 && "tap to open..."}
+            {progress.viewedCards?.length > 0 && progress.viewedCards?.length < 3 && "keep going..."}
+            {progress.viewedCards?.length === 3 && "ready for tassie farm..."}
+          </p>
+        </motion.div>
+      )}
 
       {/* Card modal with question then video */}
       <AnimatePresence>
