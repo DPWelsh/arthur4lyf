@@ -5,7 +5,7 @@ export const PASSWORD_LOWER = 'yoda';
 // Birthday Password
 export const BDAY_PASSWORD_NORMALIZED = 'luigi';
 export const BDAY_HINT_1 = 'name of our fave pizza throwing icon';
-export const BDAY_HINT_2 = "mario's brother";
+export const BDAY_HINT_2 = "his name is very italian";
 
 // Birthday Food Tour Stops
 export const TOUR_STOPS = [
