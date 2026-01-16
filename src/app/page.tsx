@@ -141,7 +141,7 @@ export default function BirthdayLanding() {
                 transform: 'rotate(-1deg)'
               }}
             >
-              Olivia G
+              LivWahGow
             </motion.h1>
 
             {/* Food tour subtitle */}
