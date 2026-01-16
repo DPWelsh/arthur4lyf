@@ -236,7 +236,7 @@ export default function TourPage() {
                     animate={{ opacity: 1 }}
                     className="text-center mt-4 font-[family-name:var(--font-hand)] text-lg text-[#FF6B6B]"
                   >
-                    Try again!
+                    that&apos;s a bit awkward..
                   </motion.p>
                 )}
 
