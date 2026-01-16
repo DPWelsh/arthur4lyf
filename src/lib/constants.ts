@@ -50,7 +50,7 @@ export const TOUR_STOPS = [
     pairing: "Fancy Dinner",
     pairingOptions: ["Fancy Dinner", "Pizza", "Pasta", "Burgers"],
     image: "/images/bday/BiSTRA_carlton.jpg",
-    reveal: "Fancy finale!"
+    reveal: "fancy dinner for a fancy gal"
   }
 ] as const;
 
