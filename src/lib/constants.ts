@@ -39,7 +39,7 @@ export const TOUR_STOPS = [
     isChallenge: true,
     challenge: "Walk in and ask for 'the most exquisite drink' - that's all you can say",
     image: "/images/bday/royal_oak_fitzroy.jpg",
-    reveal: ""
+    reveal: "u got this"
   },
   {
     id: 4,
