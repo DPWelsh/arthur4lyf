@@ -29,7 +29,7 @@ export const TOUR_STOPS = [
     pairing: "Oysters & Wine",
     pairingOptions: ["Oysters & Wine", "Cheese Board", "Charcuterie", "Bruschetta"],
     image: "/images/bday/neighbourhood_wine.jpg",
-    reveal: "Shuck yeah!"
+    reveal: "Shit yeah!"
   },
   {
     id: 3,
