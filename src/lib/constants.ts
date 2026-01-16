@@ -4,7 +4,7 @@ export const PASSWORD_LOWER = 'yoda';
 
 // Birthday Password
 export const BDAY_PASSWORD_NORMALIZED = 'luigi';
-export const BDAY_HINT_1 = 'favourite pizza throwing icon';
+export const BDAY_HINT_1 = 'name of our fave pizza throwing icon';
 export const BDAY_HINT_2 = "mario's brother";
 
 // Birthday Food Tour Stops
