@@ -2,10 +2,10 @@
 export const PASSWORD = 'yoda';
 export const PASSWORD_LOWER = 'yoda';
 
-// Birthday Password (accepts "raja ampat" or "rajaampat")
-export const BDAY_PASSWORD_NORMALIZED = 'rajaampat';
-export const BDAY_HINT_1 = 'where do you want to go diving in indo next..?';
-export const BDAY_HINT_2 = 'dream diving in indo in south west papua';
+// Birthday Password
+export const BDAY_PASSWORD_NORMALIZED = 'luigi';
+export const BDAY_HINT_1 = 'favourite pizza throwing icon';
+export const BDAY_HINT_2 = 'favourite pizza throwing icon';
 
 // Birthday Food Tour Stops
 export const TOUR_STOPS = [

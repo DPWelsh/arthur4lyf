@@ -119,7 +119,7 @@ export default function BirthdayLanding() {
               style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.1)' }}
             >
               <span className="font-[family-name:var(--font-hand)] text-lg sm:text-xl text-[#2D2D2D]">
-                Food Tour Edition
+                Melbz Food Tour
               </span>
             </motion.div>
 
@@ -156,7 +156,7 @@ export default function BirthdayLanding() {
                          hover:bg-[#ff5252] transition-colors"
                 style={{ boxShadow: '3px 3px 0 #2D2D2D' }}
               >
-                LET&apos;S EAT
+                okaaayyy
               </motion.button>
             </form>
 
