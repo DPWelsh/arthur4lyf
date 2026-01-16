@@ -198,7 +198,7 @@ export default function BirthdayLanding() {
               className="w-8 h-8 border-4 border-[#FF6B6B] border-t-transparent rounded-full"
             />
             <p className="font-[family-name:var(--font-hand)] text-xl text-[#2D2D2D]/60">
-              let&apos;s go...
+              noice
             </p>
           </motion.div>
         )}
