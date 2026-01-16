@@ -350,8 +350,11 @@ export default function TourPage() {
 
                   {/* Challenge instruction or pairing */}
                   {isChallenge && 'challenge' in currentStop ? (
-                    <div className="mt-4">
-                      <span className="inline-block bg-[#2D2D2D] text-white text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+                    <div className="mt-4 text-center">
+                      <span
+                        className="inline-block bg-[#FF6B6B] text-white text-xs font-[family-name:var(--font-spray)] tracking-wider uppercase px-4 py-1.5 rounded-sm transform -rotate-1 mb-3"
+                        style={{ boxShadow: '2px 2px 0 #2D2D2D' }}
+                      >
                         challenge
                       </span>
                       <p className="font-[family-name:var(--font-hand)] text-lg text-[#2D2D2D] text-center">
