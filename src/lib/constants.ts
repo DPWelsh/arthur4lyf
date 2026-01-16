@@ -18,7 +18,7 @@ export const TOUR_STOPS = [
     pairing: "Cider & Beer",
     pairingOptions: ["Cider & Beer", "Espresso Martini", "Mimosas", "Aperol Spritz"],
     image: "/images/bday/edi_gardens.webp",
-    reveal: "Cheers in the garden!"
+    reveal: "it's a park party"
   },
   {
     id: 2,
