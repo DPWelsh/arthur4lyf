@@ -13,7 +13,7 @@ interface SnowflakeProps {
 function Snowflake({ delay, duration, left, size }: SnowflakeProps) {
   return (
     <motion.div
-      className="absolute top-0 text-white pointer-events-none select-none"
+      className="absolute top-0 pointer-events-none select-none"
       style={{ left, fontSize: size }}
       initial={{ y: -20, opacity: 0 }}
       animate={{
@@ -28,7 +28,7 @@ function Snowflake({ delay, duration, left, size }: SnowflakeProps) {
         ease: 'linear',
       }}
     >
-      ❄
+      ☀️
     </motion.div>
   );
 }
