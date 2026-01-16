@@ -373,20 +373,18 @@ export default function TourPage() {
                   </p>
 
                   {/* Continue button */}
-                  {!completedStops.includes(currentStop.id) && (
-                    <motion.button
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleContinue}
-                      className="w-full mt-6 font-[family-name:var(--font-spray)] text-xl text-white
-                               bg-[#FF6B6B] py-3 rounded-lg hover:bg-[#ff5252] transition-colors"
-                      style={{ boxShadow: '3px 3px 0 #2D2D2D' }}
-                    >
-                      {isLastStop ? 'DONE!' : 'NEXT STOP →'}
-                    </motion.button>
-                  )}
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleContinue}
+                    className="w-full mt-6 font-[family-name:var(--font-spray)] text-xl text-white
+                             bg-[#FF6B6B] py-3 rounded-lg hover:bg-[#ff5252] transition-colors"
+                    style={{ boxShadow: '3px 3px 0 #2D2D2D' }}
+                  >
+                    {isLastStop ? 'DONE!' : 'NEXT STOP →'}
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
