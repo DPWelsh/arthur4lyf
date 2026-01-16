@@ -350,7 +350,10 @@ export default function TourPage() {
 
                   {/* Challenge instruction or pairing */}
                   {isChallenge && 'challenge' in currentStop ? (
-                    <div className="bg-[#FFD93D] rounded-lg p-4 mt-4">
+                    <div className="mt-4">
+                      <span className="inline-block bg-[#2D2D2D] text-white text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+                        challenge
+                      </span>
                       <p className="font-[family-name:var(--font-hand)] text-lg text-[#2D2D2D] text-center">
                         {currentStop.challenge}
                       </p>
