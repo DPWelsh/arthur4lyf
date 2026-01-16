@@ -79,7 +79,11 @@ export default function TourPage() {
     // Check if correct
     if (answer === currentStop.location) {
       setTimeout(() => {
-        const updatedStates = [...newStates];
+        const updatedStates = [...stopStates];
+        updatedStates[currentStopIndex] = {
+          ...updatedStates[currentStopIndex],
+          locationAnswer: answer,
+        };
         // If challenge stop, go straight to reveal
         if (isChallenge) {
           updatedStates[currentStopIndex].phase = 'reveal';
@@ -88,6 +92,16 @@ export default function TourPage() {
         }
         setStopStates(updatedStates);
       }, 800);
+    } else {
+      // Wrong answer - reset after delay
+      setTimeout(() => {
+        const resetStates = [...stopStates];
+        resetStates[currentStopIndex] = {
+          ...resetStates[currentStopIndex],
+          locationAnswer: null,
+        };
+        setStopStates(resetStates);
+      }, 1500);
     }
   };
 
@@ -102,10 +116,24 @@ export default function TourPage() {
     // Check if correct
     if ('pairing' in currentStop && answer === currentStop.pairing) {
       setTimeout(() => {
-        const updatedStates = [...newStates];
-        updatedStates[currentStopIndex].phase = 'reveal';
+        const updatedStates = [...stopStates];
+        updatedStates[currentStopIndex] = {
+          ...updatedStates[currentStopIndex],
+          pairingAnswer: answer,
+          phase: 'reveal',
+        };
         setStopStates(updatedStates);
       }, 800);
+    } else {
+      // Wrong answer - reset after delay
+      setTimeout(() => {
+        const resetStates = [...stopStates];
+        resetStates[currentStopIndex] = {
+          ...resetStates[currentStopIndex],
+          pairingAnswer: null,
+        };
+        setStopStates(resetStates);
+      }, 1500);
     }
   };
 
