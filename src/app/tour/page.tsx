@@ -246,7 +246,7 @@ export default function TourPage() {
                     animate={{ opacity: 1 }}
                     className="text-center mt-4 font-[family-name:var(--font-hand)] text-lg text-[#6BCB77]"
                   >
-                    Yes! 🎉
+                    Yes!
                   </motion.p>
                 )}
               </div>
@@ -315,7 +315,7 @@ export default function TourPage() {
                     animate={{ opacity: 1 }}
                     className="text-center mt-4 font-[family-name:var(--font-hand)] text-lg text-[#6BCB77]"
                   >
-                    Perfect! 🍴
+                    Perfect!
                   </motion.p>
                 )}
               </div>
@@ -352,7 +352,7 @@ export default function TourPage() {
                   {isChallenge && 'challenge' in currentStop ? (
                     <div className="bg-[#FFD93D] rounded-lg p-4 mt-4">
                       <p className="font-[family-name:var(--font-hand)] text-lg text-[#2D2D2D] text-center">
-                        🎯 {currentStop.challenge}
+                        {currentStop.challenge}
                       </p>
                     </div>
                   ) : 'pairing' in currentStop ? (
@@ -396,11 +396,22 @@ export default function TourPage() {
             className="mt-8 text-center"
           >
             <p className="font-[family-name:var(--font-spray)] text-3xl text-[#FF6B6B]">
-              Happy Birthday! 🎂
+              Happy Birthday!
             </p>
             <p className="font-[family-name:var(--font-hand)] text-lg text-[#2D2D2D]/60 mt-2">
               Enjoy your food tour!
             </p>
+            <motion.a
+              href="/"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="inline-block mt-6 font-[family-name:var(--font-spray)] text-lg text-white
+                       bg-[#FF6B6B] px-6 py-2 rounded-lg hover:bg-[#ff5252] transition-colors"
+              style={{ boxShadow: '2px 2px 0 #2D2D2D' }}
+            >
+              HOME
+            </motion.a>
           </motion.div>
         )}
       </div>

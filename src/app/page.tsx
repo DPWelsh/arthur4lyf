@@ -11,14 +11,19 @@ export default function BirthdayLanding() {
   const [error, setError] = useState(false);
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [unlocking, setUnlocking] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
+  const [showArchive, setShowArchive] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const progress = getBdayProgress();
-    if (progress.unlocked) {
-      router.push('/tour');
+  const handleTitleTap = () => {
+    const newCount = tapCount + 1;
+    setTapCount(newCount);
+    if (newCount >= 5) {
+      setShowArchive(true);
     }
-  }, [router]);
+  };
+
+  // Don't auto-redirect - let them click enter each time
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,48 +47,8 @@ export default function BirthdayLanding() {
 
   return (
     <main className="relative min-h-screen w-screen flex flex-col items-center justify-center bg-[#FFF8E7] overflow-hidden">
-      {/* Playful background doodles */}
+      {/* Playful background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Wine glass doodle */}
-        <motion.div
-          className="absolute top-[10%] left-[8%] text-5xl opacity-30"
-          animate={{ rotate: [0, 10, 0], y: [0, -5, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        >
-          🍷
-        </motion.div>
-        {/* Fork and knife */}
-        <motion.div
-          className="absolute top-[15%] right-[12%] text-4xl opacity-25"
-          animate={{ rotate: [0, -8, 0] }}
-          transition={{ duration: 3, repeat: Infinity }}
-        >
-          🍴
-        </motion.div>
-        {/* Oyster */}
-        <motion.div
-          className="absolute bottom-[25%] left-[10%] text-4xl opacity-30"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2.5, repeat: Infinity }}
-        >
-          🦪
-        </motion.div>
-        {/* Beer */}
-        <motion.div
-          className="absolute bottom-[30%] right-[8%] text-5xl opacity-25"
-          animate={{ rotate: [0, 5, 0], y: [0, -3, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity }}
-        >
-          🍺
-        </motion.div>
-        {/* Cake */}
-        <motion.div
-          className="absolute top-[45%] left-[5%] text-3xl opacity-20"
-          animate={{ scale: [1, 1.15, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          🎂
-        </motion.div>
         {/* Confetti elements */}
         <motion.div
           className="absolute top-[20%] left-[30%] w-3 h-3 rounded-full bg-[#FF6B6B]"
@@ -133,9 +98,10 @@ export default function BirthdayLanding() {
               Happy Birthday
             </motion.span>
 
-            {/* Main name - big spray paint style */}
+            {/* Main name - big spray paint style (tap 5x for archive) */}
             <motion.h1
-              className="text-6xl sm:text-8xl font-[family-name:var(--font-spray)] text-[#2D2D2D]"
+              onClick={handleTitleTap}
+              className="text-6xl sm:text-8xl font-[family-name:var(--font-spray)] text-[#2D2D2D] cursor-pointer select-none"
               style={{
                 textShadow: '3px 3px 0 #FF6B6B, 6px 6px 0 rgba(0,0,0,0.1)',
                 transform: 'rotate(-1deg)'
@@ -149,13 +115,12 @@ export default function BirthdayLanding() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="flex items-center gap-2 bg-[#FFD93D] px-4 py-2 rounded-sm transform rotate-1"
+              className="bg-[#FFD93D] px-4 py-2 rounded-sm transform rotate-1"
               style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.1)' }}
             >
               <span className="font-[family-name:var(--font-hand)] text-lg sm:text-xl text-[#2D2D2D]">
                 Food Tour Edition
               </span>
-              <span className="text-xl">🍽️</span>
             </motion.div>
 
             {/* Password input */}
@@ -230,10 +195,8 @@ export default function BirthdayLanding() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-              className="text-6xl"
-            >
-              🍽️
-            </motion.div>
+              className="w-8 h-8 border-4 border-[#FF6B6B] border-t-transparent rounded-full"
+            />
             <p className="font-[family-name:var(--font-hand)] text-xl text-[#2D2D2D]/60">
               let&apos;s go...
             </p>
