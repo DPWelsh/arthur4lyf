@@ -15,8 +15,8 @@ export const TOUR_STOPS = [
     location: "Edi Garden",
     locationOptions: ["Edi Garden", "Arbory", "Garden State", "Heartattack and Vine"],
     pairingQuestion: "What are we having?",
-    pairing: "Cider & Beer",
-    pairingOptions: ["Cider & Beer", "Espresso Martini", "Mimosas", "Aperol Spritz"],
+    pairing: "Beer",
+    pairingOptions: ["Beer", "Espresso Martini", "Mimosas", "Aperol Spritz"],
     image: "/images/bday/edi_gardens.webp",
     reveal: "it's a park party"
   },
