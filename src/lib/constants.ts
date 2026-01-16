@@ -37,7 +37,7 @@ export const TOUR_STOPS = [
     location: "Royal Oak",
     locationOptions: ["Royal Oak", "The Everleigh", "Black Pearl", "Naked for Satan"],
     isChallenge: true,
-    challenge: "Walk in and ask for 'the most exquisite beer' - that's all you can say",
+    challenge: "Walk in and ask for 'the most exquisite drink' - that's all you can say",
     image: "/images/bday/royal_oak_fitzroy.jpg",
     reveal: "Good luck!"
   },
