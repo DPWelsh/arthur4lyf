@@ -1,6 +1,58 @@
-// Password
+// Christmas Password
 export const PASSWORD = 'yoda';
 export const PASSWORD_LOWER = 'yoda';
+
+// Birthday Password (accepts "raja ampat" or "rajaampat")
+export const BDAY_PASSWORD_NORMALIZED = 'rajaampat';
+export const BDAY_HINT_1 = 'where do you want to go diving in indo next..?';
+export const BDAY_HINT_2 = 'dream diving in indo in south west papua';
+
+// Birthday Food Tour Stops
+export const TOUR_STOPS = [
+  {
+    id: 1,
+    locationQuestion: "Where are we starting?",
+    location: "Edi Garden",
+    locationOptions: ["Edi Garden", "Arbory", "Garden State", "Heartattack and Vine"],
+    pairingQuestion: "What are we having?",
+    pairing: "Cider & Beer",
+    pairingOptions: ["Cider & Beer", "Espresso Martini", "Mimosas", "Aperol Spritz"],
+    image: "/images/bday/edi_gardens.webp",
+    reveal: "Cheers in the garden!"
+  },
+  {
+    id: 2,
+    locationQuestion: "Next stop?",
+    location: "Neighbourhood Wine",
+    locationOptions: ["Neighbourhood Wine", "Bar Liberty", "Embla", "Marion"],
+    pairingQuestion: "What's the pairing?",
+    pairing: "Oysters & Wine",
+    pairingOptions: ["Oysters & Wine", "Cheese Board", "Charcuterie", "Bruschetta"],
+    image: "/images/bday/neighbourhood_wine.jpg",
+    reveal: "Shuck yeah!"
+  },
+  {
+    id: 3,
+    locationQuestion: "Which pub?",
+    location: "Royal Oak",
+    locationOptions: ["Royal Oak", "The Everleigh", "Black Pearl", "Naked for Satan"],
+    isChallenge: true,
+    challenge: "Walk in and ask for 'the most exquisite beer' - that's all you can say",
+    image: "/images/bday/royal_oak_fitzroy.jpg",
+    reveal: "Good luck!"
+  },
+  {
+    id: 4,
+    locationQuestion: "Dinner destination?",
+    location: "Bistra",
+    locationOptions: ["Bistra", "Tipo 00", "Scopri", "Epocha"],
+    pairingQuestion: "What's for dinner?",
+    pairing: "Fancy Dinner",
+    pairingOptions: ["Fancy Dinner", "Pizza", "Pasta", "Burgers"],
+    image: "/images/bday/BiSTRA_carlton.jpg",
+    reveal: "Fancy finale!"
+  }
+] as const;
 
 // Puzzle content - replace placeholders with real content
 export const MEMORY_CARDS = [

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { PASSWORD_LOWER } from '@/lib/constants';
-import { getProgress, setUnlocked, resetProgress } from '@/lib/progress';
+import { BDAY_PASSWORD_NORMALIZED, BDAY_HINT_1, BDAY_HINT_2 } from '@/lib/constants';
+import { getBdayProgress, setBdayUnlocked } from '@/lib/progress';
 
-export default function PasswordGate() {
+export default function BirthdayLanding() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [wrongGuesses, setWrongGuesses] = useState(0);
@@ -14,21 +14,22 @@ export default function PasswordGate() {
   const router = useRouter();
 
   useEffect(() => {
-    const progress = getProgress();
+    const progress = getBdayProgress();
     if (progress.unlocked) {
-      router.push('/hub');
+      router.push('/tour');
     }
   }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const input = password.toLowerCase().trim();
-    if (input === PASSWORD_LOWER) {
+    // Normalize input: lowercase, remove spaces
+    const input = password.toLowerCase().trim().replace(/\s+/g, '');
+    if (input === BDAY_PASSWORD_NORMALIZED) {
       setUnlocking(true);
-      setUnlocked(true);
+      setBdayUnlocked(true);
       setTimeout(() => {
-        router.push('/hub');
+        router.push('/tour');
       }, 1500);
     } else {
       setError(true);
@@ -37,30 +38,77 @@ export default function PasswordGate() {
     }
   };
 
+  const currentHint = wrongGuesses >= 3 ? BDAY_HINT_2 : BDAY_HINT_1;
+
   return (
-    <main className="relative h-screen w-screen flex flex-col items-center justify-center bg-[#1a1a1a] overflow-hidden">
-      {/* Background Christmas graffiti elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-5 text-6xl rotate-12 text-[#c41e3a]">❄</div>
-        <div className="absolute top-20 right-10 text-4xl -rotate-6 text-[#228b22]">★</div>
-        <div className="absolute bottom-32 left-10 text-3xl rotate-45 text-white">❄</div>
-        <div className="absolute bottom-20 right-20 text-5xl -rotate-12 text-[#c41e3a]">✦</div>
-        <div className="absolute top-1/2 left-[10%] text-2xl rotate-6 text-[#228b22]">❄</div>
-        <div className="absolute top-[30%] right-[5%] text-3xl -rotate-12 text-white/50">✧</div>
+    <main className="relative min-h-screen w-screen flex flex-col items-center justify-center bg-[#FFF8E7] overflow-hidden">
+      {/* Playful background doodles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Wine glass doodle */}
+        <motion.div
+          className="absolute top-[10%] left-[8%] text-5xl opacity-30"
+          animate={{ rotate: [0, 10, 0], y: [0, -5, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          🍷
+        </motion.div>
+        {/* Fork and knife */}
+        <motion.div
+          className="absolute top-[15%] right-[12%] text-4xl opacity-25"
+          animate={{ rotate: [0, -8, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          🍴
+        </motion.div>
+        {/* Oyster */}
+        <motion.div
+          className="absolute bottom-[25%] left-[10%] text-4xl opacity-30"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+        >
+          🦪
+        </motion.div>
+        {/* Beer */}
+        <motion.div
+          className="absolute bottom-[30%] right-[8%] text-5xl opacity-25"
+          animate={{ rotate: [0, 5, 0], y: [0, -3, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity }}
+        >
+          🍺
+        </motion.div>
+        {/* Cake */}
+        <motion.div
+          className="absolute top-[45%] left-[5%] text-3xl opacity-20"
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          🎂
+        </motion.div>
+        {/* Confetti elements */}
+        <motion.div
+          className="absolute top-[20%] left-[30%] w-3 h-3 rounded-full bg-[#FF6B6B]"
+          animate={{ y: [0, 10, 0], rotate: [0, 180, 360] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute top-[35%] right-[25%] w-2 h-2 rounded-full bg-[#FFD93D]"
+          animate={{ y: [0, -8, 0], rotate: [0, -180, -360] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-[40%] left-[35%] w-2.5 h-2.5 rounded-full bg-[#6BCB77]"
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute top-[60%] right-[35%] w-2 h-2 rounded-full bg-[#FF6B6B]"
+          animate={{ x: [0, 5, 0], y: [0, -5, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
       </div>
 
-      {/* String lights across top */}
-      <div className="absolute top-0 left-0 right-0 h-8 flex justify-around items-center opacity-60">
-        {[...Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`w-3 h-3 rounded-full ${i % 3 === 0 ? 'bg-[#c41e3a]' : i % 3 === 1 ? 'bg-[#228b22]' : 'bg-[#ffd700]'}`}
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
-            style={{ boxShadow: `0 0 8px ${i % 3 === 0 ? '#c41e3a' : i % 3 === 1 ? '#228b22' : '#ffd700'}` }}
-          />
-        ))}
-      </div>
+      {/* Scratchy border frame */}
+      <div className="absolute inset-4 sm:inset-8 border-4 border-dashed border-[#FF6B6B]/30 rounded-lg pointer-events-none" />
 
       <AnimatePresence>
         {!unlocking ? (
@@ -69,99 +117,111 @@ export default function PasswordGate() {
             animate={{ opacity: 1, y: 0 }}
             exit={{
               opacity: 0,
-              y: -100,
-              scale: 0.8,
-              rotate: -5,
-              transition: { duration: 0.8 }
+              scale: 0.9,
+              y: -50,
+              transition: { duration: 0.6 }
             }}
-            className={`flex flex-col items-center gap-12 z-10 ${error ? 'shake' : ''}`}
+            className={`flex flex-col items-center gap-8 z-10 px-6 ${error ? 'shake' : ''}`}
           >
-              <span
-                className="font-[family-name:var(--font-spray)] text-xl sm:text-2xl text-[#228b22] tracking-wider"
-                style={{
-                  textShadow: '2px 2px 0 #c41e3a, -1px -1px 0 #fff',
-                  transform: 'rotate(3deg)',
-                  display: 'inline-block'
-                }}
-              >
-                CHRISTMAS IS HERE
-              </span>
-            {/* Tag name - graffiti style */}
+            {/* Birthday subtitle */}
+            <motion.span
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="font-[family-name:var(--font-hand)] text-xl sm:text-2xl text-[#FF6B6B] tracking-wide"
+            >
+              Happy Birthday
+            </motion.span>
+
+            {/* Main name - big spray paint style */}
             <motion.h1
-              className="text-7xl sm:text-9xl font-[family-name:var(--font-spray)] text-white paint-drip"
+              className="text-6xl sm:text-8xl font-[family-name:var(--font-spray)] text-[#2D2D2D]"
               style={{
-                textShadow: '4px 4px 0 #c41e3a, 8px 8px 0 rgba(0,0,0,0.3)',
-                transform: 'rotate(-2deg)'
+                textShadow: '3px 3px 0 #FF6B6B, 6px 6px 0 rgba(0,0,0,0.1)',
+                transform: 'rotate(-1deg)'
               }}
             >
-              Olivia G 
+              Olivia G
             </motion.h1>
+
+            {/* Food tour subtitle */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="relative"
+              transition={{ delay: 0.4 }}
+              className="flex items-center gap-2 bg-[#FFD93D] px-4 py-2 rounded-sm transform rotate-1"
+              style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.1)' }}
             >
+              <span className="font-[family-name:var(--font-hand)] text-lg sm:text-xl text-[#2D2D2D]">
+                Food Tour Edition
+              </span>
+              <span className="text-xl">🍽️</span>
             </motion.div>
 
-            {/* Password hint */}
-            <p className="font-[family-name:var(--font-hand)] text-sm text-white/40 -mt-2">
-                Guess the password to enter 
-              </p>
-
             {/* Password input */}
-            <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col items-center gap-5 mt-4">
               <div className="relative">
                 <input
-                  type="password"
+                  type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="..."
-                  className="bg-transparent border-b-4 border-white/50 focus:border-[#c41e3a]
-                           text-center text-3xl font-[family-name:var(--font-hand)] text-white
-                           w-64 py-4 outline-none transition-colors placeholder:text-white/30"
+                  className="bg-white/80 border-3 border-[#2D2D2D] border-dashed
+                           text-center text-2xl font-[family-name:var(--font-hand)] text-[#2D2D2D]
+                           w-64 py-4 rounded-sm outline-none transition-all
+                           focus:border-[#FF6B6B] focus:border-solid
+                           placeholder:text-[#2D2D2D]/30"
+                  style={{ boxShadow: '3px 3px 0 rgba(0,0,0,0.1)' }}
                   autoFocus
                   autoComplete="off"
                 />
-                {/* Scratched underline effect */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               </div>
 
               {/* Password hint */}
-              <p className="font-[family-name:var(--font-hand)] text-sm text-white/40 -mt-2">
-                {wrongGuesses >= 3
-                  ? 'hint: four letter name for your pooch'
-                  : 'hint: your next company name'}
+              <p className="font-[family-name:var(--font-hand)] text-sm text-[#2D2D2D]/50 text-center max-w-xs">
+                {currentHint}
               </p>
 
               <motion.button
                 type="submit"
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className="font-[family-name:var(--font-spray)] text-xl text-white
-                         bg-[#c41e3a] px-8 py-3 rounded-sm transform rotate-1
-                         hover:bg-[#a01830] transition-colors touch-highlight"
-                style={{ boxShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}
+                         bg-[#FF6B6B] px-10 py-3 rounded-sm transform -rotate-1
+                         hover:bg-[#ff5252] transition-colors"
+                style={{ boxShadow: '3px 3px 0 #2D2D2D' }}
               >
-                ENTER
+                LET&apos;S EAT
               </motion.button>
             </form>
 
-            {/* Error hint */}
+            {/* Error message */}
             <AnimatePresence>
               {error && (
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="font-[family-name:var(--font-hand)] text-2xl text-[#c41e3a]"
+                  className="font-[family-name:var(--font-hand)] text-xl text-[#FF6B6B]"
                 >
-                  nah...
+                  nope, try again...
                 </motion.p>
               )}
             </AnimatePresence>
+
+            {/* Archive link */}
+            <motion.a
+              href="/christmas"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="font-[family-name:var(--font-hand)] text-sm text-[#2D2D2D]/30 hover:text-[#2D2D2D]/50 transition-colors mt-4"
+            >
+              revisit christmas →
+            </motion.a>
           </motion.div>
         ) : (
-          /* Unlock animation - loading state */
+          /* Unlock animation */
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -169,39 +229,18 @@ export default function PasswordGate() {
           >
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               className="text-6xl"
             >
-              ❄
+              🍽️
             </motion.div>
-            <p className="font-[family-name:var(--font-hand)] text-xl text-white/60">
-              opening...
+            <p className="font-[family-name:var(--font-hand)] text-xl text-[#2D2D2D]/60">
+              let&apos;s go...
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Paint drips on error */}
-      <AnimatePresence>
-        {error && (
-          <>
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ y: -20, opacity: 1 }}
-                animate={{ y: '100vh', opacity: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, delay: i * 0.1 }}
-                className="absolute top-0 w-2 bg-[#c41e3a] rounded-full"
-                style={{
-                  left: `${20 + i * 15}%`,
-                  height: `${30 + Math.random() * 40}px`
-                }}
-              />
-            ))}
-          </>
-        )}
-      </AnimatePresence>
     </main>
   );
 }
